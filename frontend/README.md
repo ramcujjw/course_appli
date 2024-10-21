@@ -25,3 +25,21 @@ interception httpide headerill token attach cheyum
 
 
 department location salary
+
+
+axiosinterceptor.js
+
+config :currently ayakunna token
+ative token inte header part ile token read cheyth assign cheyum
+
+axiosinstance :can be any word
+
+http vech interceptor create cheythu => export cheyum => changes frontendile axios.___ mari axiosInsatnce akum(login.jsx)
+export default ayond ann {} ella
+
+
+private routes
+
+routes protect cheyan 
+path visibility protect cheyan (security vulnerability issues) 
+implementation: terrinary operator use cheyum

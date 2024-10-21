@@ -5,6 +5,7 @@ import Navbar from './Navbar';
 import { Button, CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import axiosInstance from '../axiosinterceptor';
 
 const Add = () => {
   const navigate = useNavigate();
@@ -29,10 +30,10 @@ const Add = () => {
 
     try {
       if (location.state != null) {
-        await axios.put(`http://localhost:3000/course/editCourse/${location.state.course._id}`, form);
+        await axiosInstance.put(`http://localhost:3000/course/editCourse/${location.state.course._id}`, form);
         alert('Data updated');
       } else {
-        await axios.post('http://localhost:3000/course/add/', form);
+        await axiosInstance.post('http://localhost:3000/course/add/', form);
       }
       navigate('/home');
     } catch (error) {

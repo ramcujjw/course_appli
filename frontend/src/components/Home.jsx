@@ -1,106 +1,96 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Container, Grid, Stack } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import  {useNavigate} from 'react-router-dom';
+import axios from 'axios'
 import Navbar from './Navbar';
-
+import axiosInstance from '../axiosinterceptor';//default instance
 const Home = () => {
     const user = localStorage.getItem("username");
-    const [inputs, setInputs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+  const [inputs ,setInputs] = useState([])
+  const navigate = useNavigate()
+  function updateCourse(course){
+    navigate('/add',{state:{course}})
+  }
+  let deleteCourse =(p)=>{
+    //update with newly created instance
+    
+    axiosInstance.delete('http://localhost:3000/course/deleteCourse/'+p).then((res)=>{
+      window.location.reload()
+    }
+//navigate /path
+    ).catch((error)=>{
+      console.log(error)
+    })
+  }
+  useEffect(() => {
+    axiosInstance.get('http://localhost:3000/course/')
+        .then((res) => {
+            setInputs(res.data); // Set fetched product data
+        })
+        .catch((error) => {
+            console.error("Error fetching data: ", error); // Handle error
+        });
+}, []);
 
-    const fetchCourses = async () => {
-        try {
-            const res = await axios.get('http://localhost:3000/course');
-            setInputs(res.data);
-        } catch (error) {
-            console.error("Error fetching data: ", error);
-            setError('Failed to load courses.');
-        } finally {
-            setLoading(false);
-        }
-    };
+  return (
+<>
+<Navbar/>
+    <div>
+        Welcome {user}
+    </div>
+    
+    <Container>
+            <Grid container spacing={8}>    
+                {inputs.map((input) => (
+                    <Grid item key={input._id} xs={12} sm={6} md={4}>
+                        <Card>
+                            <CardMedia
+                                component="img"
+                                height="200"
+                                image={input.CourseImage}
+                                alt={input.title}
+                                style={{ objectFit: 'contain' }} // Ensures the image fits nicely within the card
+                            />
+                            <CardContent>
+                            <Typography variant="h6" component="div">
+                                    {input.CourseId}
+                                </Typography>
+                                <Typography variant="h6" component="div">
+                                    {input.CourseName}
+                                </Typography>
+                                <Typography variant="h6" component="div">
+                                    {input.CourseCategory}
+                                </Typography>
+                                <Typography variant="h6" component="div">
+                                    {input.CourseDescription}
+                                </Typography>
+                                <Typography variant="h6" component="div">
+                                    {input.CourseDuration}
+                                </Typography>
+                                <Typography variant="h6" component="div">
+                                    {input.fee}
+                                </Typography>
 
-    const deleteCourse = async (id) => {
-        try {
-            await axios.delete(`http://localhost:3000/course/deleteCourse/${id}`);
-            // Update state without reloading the page
-            setInputs(inputs.filter(course => course._id !== id));
-        } catch (error) {
-            console.error(error);
-            setError('Failed to delete course.');
-        }
-    };
+                                <Stack direction="row" spacing={4}>
+                                <Button  variant="contained" color="success" onClick={()=>{updateCourse(input)}} >Edit</Button>
 
-    useEffect(() => {
-        fetchCourses();
-    }, []);
+                                <Button  variant="contained" color="error" onClick={()=>{deleteCourse(input._id)}} >Delete</Button>
 
-    const updateCourse = (course) => {
-        navigate('/add', { state: { course } });
-    };
-
-    return (
-        <>
-            <Navbar />
-            <div>Welcome {user}</div>
-            
-            <Container>
-                {loading ? (
-                    <Typography variant="h6">Loading courses...</Typography>
-                ) : error ? (
-                    <Typography variant="h6" color="error">{error}</Typography>
-                ) : (
-                    <Grid container spacing={8}>
-                        {inputs.map((input) => (
-                            <Grid item key={input.CourseId} xs={12} sm={6} md={4}>
-                                <Card>
-                                    <CardMedia
-                                        component="img"
-                                        height="200"
-                                        image={input.CourseImage}
-                                        style={{ objectFit: 'contain' }}
-                                    />
-                                    <CardContent>
-                                        <Typography variant="h6" component="div">
-                                            {input.CourseId}
-                                        </Typography>
-                                        <Typography variant="h6" component="div">
-                                            {input.CourseName}
-                                        </Typography>
-                                        <Typography variant="h6" component="div">
-                                            {input.CourseCategory}
-                                        </Typography>
-                                        <Typography variant="h6" component="div">
-                                            {input.CourseDescription}
-                                        </Typography>
-                                        <Typography variant="h6" component="div">
-                                            {input.CourseDuration}
-                                        </Typography>
-                                        <Typography variant="h6" component="div">
-                                            {input.fee}
-                                        </Typography>
-
-                                        <Stack direction="row" spacing={4}>
-                                            <Button variant="contained" color="success" onClick={() => updateCourse(input)}>Edit</Button>
-                                            <Button variant="contained" color="error" onClick={() => deleteCourse(input._id)}>Delete</Button>
-                                        </Stack>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))}
+                                </Stack>
+                            </CardContent>
+                        </Card>
                     </Grid>
-                )}
-            </Container>
+                ))}
+            </Grid>
+        </Container>
         </>
-    );
-};
+  )
+}
 
-export default Home;
+export default Home

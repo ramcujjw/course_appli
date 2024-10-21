@@ -12,15 +12,21 @@ const Login = () => {
     let updateUser=(e)=>{
         setUser({...user,[e.target.name]:e.target.value})
 }
-let sendData=()=>{
-//      if ((user.username=="admin" )&&(user.password=="1234")) {
-//         localStorage.setItem("username","admin"); //method to store value in variable
-//         navigate('/home');
+let validateUser=()=>{
+    //  if ((user.username=="admin" )&&(user.password=="1234")) {
+    //     localStorage.setItem("username","admin"); //method to store value in variable
+    //     navigate('/home');
 
-//     }
-//      else alert("Invalid credentials")
+    // }
+    //  else alert("Invalid credentials")
 axios.post('http://localhost:3000/user/login',user).then((res)=>{
     console.log(res)
+    alert(res.data.message)
+    if(res.data.usertoken){
+      localStorage.setItem('token',res.data.usertoken);
+      navigate('/home')
+
+    }
 })
 
 }
@@ -37,7 +43,7 @@ axios.post('http://localhost:3000/user/login',user).then((res)=>{
     <TextField required id="outlined-required" label="Password" name="password" value={user.password} onChange={updateUser} />
     <br />
     <br />
-    <Button variant="contained" onClick={sendData}> Submit</Button> 
+    <Button variant="contained" onClick={validateUser}> Submit</Button> 
     </>
 
   )
